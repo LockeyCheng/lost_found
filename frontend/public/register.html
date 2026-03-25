@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 失物招领系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+        .register-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .register-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .register-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .register-form {
+            padding: 40px 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .input-with-icon {
+            position: relative;
+        }
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4facfe;
+        }
+        .input-with-icon input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .register-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+        .register-btn:active {
+            transform: translateY(0);
+        }
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+        .form-footer a {
+            color: #4facfe;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        .strength-bar {
+            height: 4px;
+            background: #e1e5e9;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            background: #ff4444;
+            transition: width 0.3s, background 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1><i class="fas fa-user-plus"></i> 创建账户</h1>
+            <p>加入失物招领社区</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        <div class="register-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">名字</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="firstName" placeholder="名字">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">姓氏</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="lastName" placeholder="姓氏">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">用户名 *</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-at"></i>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">邮箱 *</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="example@email.com" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">手机号</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="phone" placeholder="13800138000">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码 *</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="至少6个字符" required oninput="checkPasswordStrength()">
+                </div>
+                <div class="password-strength">
+                    <div id="strengthText">密码强度: 弱</div>
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthBar"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">确认密码 *</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirmPassword" placeholder="再次输入密码" required>
+                </div>
+            </div>
+            
+            <button class="register-btn" onclick="register()">
+                <i class="fas fa-user-plus"></i> 注册账户
+            </button>
+            
+            <div class="form-footer">
+                已有账户？ <a href="login.html">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showMessage(elementId, message, isError = true) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            element.style.background = isError ? '#fee' : '#efe';
+            element.style.color = isError ? '#c33' : '#3c3';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let text = '密码强度: ';
+            let color = '#ff4444';
+            
+            if (password.length >= 6) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 25;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+            
+            strengthBar.style.width = strength + '%';
+            
+            if (strength < 50) {
+                text += '弱';
+                color = '#ff4444';
+            } else if (strength < 75) {
+                text += '中';
+                color = '#ffaa00';
+            } else {
+                text += '强';
+                color = '#00C851';
+            }
+            
+            strengthText.textContent = text;
+            strengthBar.style.background = color;
+        }
+
+        async function register() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // 验证必填字段
+            if (!username || !email || !password || !confirmPassword) {
+                showMessage('errorMessage', '请填写所有必填字段（标*的）');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('errorMessage', '两次输入的密码不一致');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('errorMessage', '密码至少需要6个字符');
+                return;
+            }
+            
+            try {
+                const userData = {
+                    username,
+                    email,
+                    password,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone: phone || null
+                };
+                
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('successMessage', '注册成功！正在跳转到登录页面...', false);
+                    
+                    // 跳转到登录页面
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showMessage('errorMessage', data.message || '注册失败');
+                }
+            } catch (error) {
+                console.error('注册错误:', error);
+                showMessage('errorMessage', '网络错误，请检查后端服务');
+            }
+        }
+
+        // 按Enter键注册
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                register();
+            }
+        });
+    </script>
+</body>
+</html>

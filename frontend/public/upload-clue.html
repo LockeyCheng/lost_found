@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提供线索 - 失物招领系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        .nav-links a.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .page-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-header p {
+            color: #666;
+            font-size: 16px;
+        }
+        .upload-form {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i {
+            color: #667eea;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .form-group label.required::after {
+            content: " *";
+            color: #ff4444;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Roboto', sans-serif;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        select.form-control {
+            cursor: pointer;
+        }
+        .item-selector {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .item-preview {
+            flex: 1;
+            background: #f8f9ff;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            display: none;
+        }
+        .item-preview.active {
+            display: block;
+        }
+        .item-preview h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .item-preview p {
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .item-preview .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .status.lost {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.found {
+            background: #d4edda;
+            color: #155724;
+        }
+        .file-upload {
+            border: 2px dashed #e1e5e9;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        .file-upload i {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .file-upload h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .file-upload p {
+            color: #666;
+            font-size: 14px;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .preview-item {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 68, 68, 0.9);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 40px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e1e5e9;
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            display: none;
+        }
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            display: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .items-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+        .items-list.active {
+            display: block;
+        }
+        .item-option {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .item-option:hover {
+            background: #f8f9ff;
+        }
+        .item-option:last-child {
+            border-bottom: none;
+        }
+        .item-option h4 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        .item-option p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .item-option .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+        @media (max-width: 768px) {
+            .item-selector {
+                flex-direction: column;
+            }
+            .container {
+                padding: 0 15px;
+            }
+            .upload-form {
+                padding: 25px;
+            }
+            .navbar {
+                padding: 15px;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <i class="fas fa-search"></i>
+            <span>失物招领</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="upload-item.html"><i class="fas fa-plus-circle"></i> 发布失物</a>
+            <a href="upload-clue.html" class="active"><i class="fas fa-lightbulb"></i> 提供线索</a>
+            <a href="my-items.html"><i class="fas fa-box"></i> 我的物品</a>
+            <a href="profile.html"><i class="fas fa-user"></i> 个人中心</a>
+        </div>
+        <div class="user-info" id="userInfo">
+            <!-- 用户信息由JavaScript动态加载 -->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-lightbulb"></i> 提供线索</h1>
+            <p>如果您发现了失物或有相关线索，请在此提供信息帮助他人</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <form class="upload-form" id="uploadForm">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-search"></i> 选择物品</h2>
+                
+                <div class="form-group">
+                    <label for="itemSearch" class="required">搜索物品</label>
+                    <div class="item-selector">
+                        <input type="text" id="itemSearch" class="form-control" placeholder="输入物品名称、描述或地点进行搜索..." 
+                               oninput="searchItems()" onclick="showItemsList()">
+                        <button type="button" class="btn btn-secondary" onclick="refreshItems()">
+                            <i class="fas fa-sync-alt"></i> 刷新
+                        </button>
+                    </div>
+                    <div class="items-list" id="itemsList">
+                        <!-- 物品列表将在这里动态加载 -->
+                    </div>
+                </div>
+
+                <div class="item-preview" id="itemPreview">
+                    <!-- 选中的物品预览将在这里显示 -->
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> 线索信息</h2>
+                
+                <div class="form-group">
+                    <label for="description" class="required">线索描述</label>
+                    <textarea id="description" class="form-control" placeholder="请详细描述您发现的线索，例如：看到的时间、地点、物品状态、可能的去向等..." required></textarea>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="clueDate">发现日期</label>
+                        <input type="date" id="clueDate" class="form-control">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="clueTime">发现时间</label>
+                        <input type="time" id="clueTime" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">发现地点</label>
+                    <input type="text" id="location" class="form-control" placeholder="例如：图书馆三楼自习区、教学楼B座203教室等">
+                </div>
+
+                <div class="form-group">
+                    <label for="contactInfo">您的联系方式（可选）</label>
+                    <input type="text" id="contactInfo" class="form-control" placeholder="方便失主与您联系">
+                    <small style="color: #888; font-size: 13px;">此信息仅对物品主人可见</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-images"></i> 证据图片</h2>
+                <p style="color: #666; margin-bottom: 20px;">上传相关图片作为证据（最多3张，每张不超过5MB）</p>
+                
+                <div class="file-upload" onclick="document.getElementById('imageInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>点击上传图片</h3>
+                    <p>支持 JPG、PNG 格式</p>
+                    <input type="file" id="imageInput" accept="image/*" multiple onchange="handleImageUpload(event)">
+                </div>
+
+                <div class="preview-container" id="imagePreview">
+                    <!-- 图片预览将在这里显示 -->
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" onclick="submitClue()" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> 提交线索
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // 检查用户是否登录
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // 显示用户信息
+        function loadUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            if (user.username) {
+                userInfo.innerHTML = `
+                    <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                    <span>${user.username}</span>
+                    <a href="#" onclick="logout()" style="margin-left: 10px; color: #666; font-size: 14px;">退出</a>
+                `;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // 全局变量
+        let allItems = [];
+        let selectedItemId = null;
+        let uploadedImages = [];
+
+        // 加载物品列表
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/items?limit=50');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    allItems = data.data.items;
+                    renderItemsList(allItems);
+                } else {
+                    showMessage('errorMessage', '加载物品列表失败');
+                }
+            } catch (error) {
+                console.error('加载物品错误:', error);
+                showMessage('errorMessage', '网络错误，请检查后端服务');
+            }
+        }
+
+        // 渲染物品列表
+        function renderItemsList(items) {
+            const itemsList = document.getElementById('itemsList');
+            itemsList.innerHTML = '';
+            
+            if (items.length === 0) {
+                itemsList.innerHTML = '<div class="item-option" style="text-align: center; color: #888;">暂无物品</div>';
+                return;
+            }
+            
+            items.forEach(item => {
+                const itemOption = document.createElement('div');
+                itemOption.className = 'item-option';
+                itemOption.onclick = () => selectItem(item);
+                itemOption.innerHTML = `
+                    <h4>${item.title}</h4>
+                    <p>${item.description.substring(0, 60)}${item.description.length > 60 ? '...' : ''}</p>
+                    <div class="meta">
+                        <span>${item.category} • ${item.lost_location}</span>
+                        <span class="status ${item.status}">${getStatusText(item.status)}</span>
+                    </div>
+                `;
+                itemsList.appendChild(itemOption);
+            });
+        }
+
+        // 搜索物品
+        function searchItems() {
+            const searchTerm = document.getElementById('itemSearch').value.toLowerCase();
+            const filteredItems = allItems.filter(item => 
+                item.title.toLowerCase().includes(searchTerm) ||
+                item.description.toLowerCase().includes(searchTerm) ||
+                item.lost_location.toLowerCase().includes(searchTerm)
+            );
+            renderItemsList(filteredItems);
+        }
+
+        // 显示物品列表
+        function showItemsList() {
+            document.getElementById('itemsList').classList.add('active');
+        }
+
+        // 隐藏物品列表
+        function hideItemsList() {
+            setTimeout(() => {
+                document.getElementById('itemsList').classList.remove('active');
+            }, 200);
+        }
+
+        // 刷新物品列表
+        function refreshItems() {
+            loadItems();
+            document.getElementById('itemSearch').value = '';
+            showItemsList();
+        }
+
+        // 选择物品
+        function selectItem(item) {
+            selectedItemId = item.id;
+            const itemPreview = document.getElementById('itemPreview');
+            
+            itemPreview.innerHTML = `
+                <h4>${item.title}</h4>
+                <p><strong>描述：</strong>${item.description}</p>
+                <p><strong>分类：</strong>${item.category}</p>
+                <p><strong>丢失地点：</strong>${item.lost_location}</p>
+                <p><strong>丢失时间：</strong>${new Date(item.lost_date).toLocaleDateString()}</p>
+                <span class="status ${item.status}">${getStatusText(item.status)}</span>
+            `;
+            itemPreview.classList.add('active');
+            
+            document.getElementById('itemSearch').value = item.title;
+            hideItemsList();
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const statusMap = {
+                'lost': '遗失中',
+                'found': '已找到',
+                'returned': '已归还'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 图片上传处理
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('imagePreview');
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // 检查文件大小（5MB限制）
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage('errorMessage', `文件 ${file.name} 超过5MB限制`);
+                    continue;
+                }
+                
+                // 检查文件类型
+                if (!file.type.startsWith('image/')) {
+                    showMessage('errorMessage', `文件 ${file.name} 不是图片格式`);
+                    continue;
+                }
+                
+                // 检查数量限制
+                if (uploadedImages.length >= 3) {
+                    showMessage('errorMessage', '最多只能上传3张图片');
+                    break;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    uploadedImages.push({
+                        name: file.name,
+                        data: imageData,
+                        type: file.type
+                    });
+                    
+                    // 创建预览
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    previewItem.innerHTML = `
+                        <img src="${imageData}" alt="${file.name}">
+                        <div class="remove-btn" onclick="removeImage(${uploadedImages.length - 1})">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                    previewContainer.appendChild(previewItem);
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // 重置文件输入
+            event.target.value = '';
+        }
+        
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            updateImagePreview();
+        }
+        
+        function updateImagePreview() {
+            const previewContainer = document.getElementById('imagePreview');
+            previewContainer.innerHTML = '';
+            
+            uploadedImages.forEach((image, index) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                    <img src="${image.data}" alt="${image.name}">
+                    <div class="remove-btn" onclick="removeImage(${index})">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
+                previewContainer.appendChild(previewItem);
+            });
+        }
+        
+        function showMessage(elementId, message, isError = true) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            element.style.background = isError ? '#fee' : '#efe';
+            element.style.color = isError ? '#c33' : '#3c3';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        async function submitClue() {
+            const description = document.getElementById('description').value.trim();
+            const clueDate = document.getElementById('clueDate').value;
+            const clueTime = document.getElementById('clueTime').value;
+            const location = document.getElementById('location').value.trim();
+            const contactInfo = document.getElementById('contactInfo').value.trim();
+            
+            // 验证必填字段
+            if (!selectedItemId) {
+                showMessage('errorMessage', '请选择一个物品');
+                return;
+            }
+            
+            if (!description) {
+                showMessage('errorMessage', '请填写线索描述');
+                return;
+            }
+            
+            // 组合日期和时间
+            let clueDateTime = null;
+            if (clueDate) {
+                clueDateTime = clueDate;
+                if (clueTime) {
+                    clueDateTime += 'T' + clueTime + ':00';
+                }
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="loading"></div> 提交中...';
+            submitBtn.disabled = true;
+            
+            try {
+                // 创建FormData对象
+                const formData = new FormData();
+                formData.append('item_id', selectedItemId);
+                formData.append('description', description);
+                
+                if (clueDateTime) formData.append('found_date', clueDateTime);
+                if (location) formData.append('location', location);
+                if (contactInfo) formData.append('contact_info', contactInfo);
+                
+                // 添加图片文件
+                uploadedImages.forEach((image, index) => {
+                    // 将dataURL转换为Blob
+                    const byteString = atob(image.data.split(',')[1]);
+                    const mimeString = image.data.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new ArrayBuffer(byteString.length);
+                    const ia = new Uint8Array(ab);
+                    for (let i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    const blob = new Blob([ab], { type: mimeString });
+                    formData.append('images', blob, `clue_${index}.${mimeString.split('/')[1]}`);
+                });
+                
+                const response = await fetch('/api/clues', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('successMessage', '线索提交成功！感谢您的帮助', false);
+                    
+                    // 清空表单
+                    document.getElementById('uploadForm').reset();
+                    selectedItemId = null;
+                    uploadedImages = [];
+                    updateImagePreview();
+                    document.getElementById('itemPreview').classList.remove('active');
+                    
+                    // 跳转到物品详情页
+                    setTimeout(() => {
+                        window.location.href = `item-detail.html?id=${selectedItemId}`;
+                    }, 2000);
+                } else {
+                    showMessage('errorMessage', data.message || '提交失败');
+                }
+            } catch (error) {
+                console.error('提交错误:', error);
+                showMessage('errorMessage', '网络错误，请检查后端服务');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // 页面加载时初始化
+        window.onload = function() {
+            loadUserInfo();
+            loadItems();
+            
+            // 设置默认日期为今天
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('clueDate').value = today;
+            
+            // 设置默认时间为当前时间
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('clueTime').value = `${hours}:${minutes}`;
+            
+            // 点击页面其他地方隐藏物品列表
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#itemSearch') && !e.target.closest('#itemsList')) {
+                    hideItemsList();
+                }
+            });
+        };
+
